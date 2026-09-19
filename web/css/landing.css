@@ -1,0 +1,179 @@
+/* Modern, high-end government tech aesthetic */
+:root {
+    --bg-dark: #0a0f18;
+    --bg-card: #111827;
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --gold: #d4af37;
+    --gold-hover: #fcd34d;
+    --accent-blue: #3b82f6;
+    --border-light: rgba(255, 255, 255, 0.1);
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font-sans); line-height: 1.5; }
+
+body.landing, body.auth {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    overflow-x: hidden;
+}
+
+/* Typography */
+h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+h1 em { color: var(--gold); font-style: normal; }
+h2 { font-size: 2.5rem; font-weight: 600; margin-bottom: 1rem; letter-spacing: -0.01em; }
+h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: #fff; }
+p { color: var(--text-muted); font-size: 1.125rem; }
+.eyebrow { text-transform: uppercase; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: var(--accent-blue); margin-bottom: 1rem; }
+.eyebrow.light { color: var(--gold); }
+
+/* Buttons & Links */
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: all 0.2s ease; cursor: pointer; border: none; }
+.btn.full { width: 100%; margin-top: 1.5rem; }
+.btn-gold { background: var(--gold); color: #000; }
+.btn-gold:hover { background: var(--gold-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); }
+.btn-outline { background: transparent; color: #fff; border: 1px solid var(--border-light); }
+.btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.05); }
+.text-link { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: color 0.2s ease; }
+.text-link:hover, a:hover { color: var(--gold); }
+a { color: var(--gold); text-decoration: none; transition: color 0.2s ease; }
+
+/* Brand */
+.brand { display: inline-flex; align-items: center; gap: 1rem; text-decoration: none; color: #fff; }
+.brand .crest { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--gold); color: #000; font-weight: 800; font-size: 1.5rem; border-radius: 8px; }
+.brand span { font-weight: 700; font-size: 1.25rem; display: flex; flex-direction: column; line-height: 1.1; }
+.brand small { font-weight: 400; font-size: 0.75rem; color: var(--text-muted); }
+
+/* Header Navigation (Landing only) */
+.public-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 4%; position: fixed; top: 0; left: 0; right: 0; background: rgba(10, 15, 24, 0.8); backdrop-filter: blur(12px); z-index: 100; border-bottom: 1px solid var(--border-light); }
+.public-nav nav { display: flex; gap: 2rem; align-items: center; }
+.public-nav nav a:not(.btn) { color: var(--text-muted); }
+
+/* Landing Layout elements ... */
+.hero { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 12rem 4% 8rem 4%; min-height: 100vh; align-items: center; position: relative; overflow: hidden; }
+.hero-copy { position: relative; z-index: 10; max-width: 600px; }
+.hero-copy > p.lead { margin-bottom: 2.5rem; font-size: 1.25rem; }
+.hero-actions { display: flex; align-items: center; gap: 2rem; margin-top: 2.5rem; }
+.hero-stat { margin-top: 4rem; display: flex; gap: 2rem; border-top: 1px solid var(--border-light); padding-top: 2rem; }
+.hero-stat span { display: flex; flex-direction: column; font-size: 0.85rem; color: var(--text-muted); }
+.hero-stat b { font-size: 1.5rem; color: #fff; margin-bottom: 0.25rem; }
+
+/* ... Rest of landing CSS omitted for brevity but I need to include it ... */
+.hero-panel { position: relative; height: 500px; display: flex; justify-content: center; align-items: center; }
+.map-grid { position: absolute; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; -webkit-mask-image: radial-gradient(circle at center, black, transparent 70%); }
+.orbit { position: absolute; border: 1px dashed var(--border-light); border-radius: 50%; animation: spin 30s linear infinite; }
+.orbit.o1 { width: 300px; height: 300px; }
+.orbit.o2 { width: 450px; height: 450px; animation-direction: reverse; animation-duration: 40s; }
+.pulse { position: absolute; width: 12px; height: 12px; background: var(--gold); border-radius: 50%; box-shadow: 0 0 20px var(--gold); }
+.pulse::after { content: ''; position: absolute; width: 100%; height: 100%; background: var(--gold); border-radius: 50%; animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+.p1 { top: 30%; left: 40%; }
+.p2 { top: 60%; right: 30%; background: #ef4444; box-shadow: 0 0 20px #ef4444; }
+.p2::after { background: #ef4444; animation-delay: 1s; }
+.p3 { bottom: 20%; left: 50%; }
+
+.floating-card { position: absolute; background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(12px); border: 1px solid var(--border-light); padding: 1rem 1.5rem; border-radius: 12px; display: flex; flex-direction: column; gap: 0.25rem; box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: float 6s ease-in-out infinite; }
+.floating-card small { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.floating-card b { color: #fff; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.floating-card .dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+.card-a { top: 15%; right: 10%; }
+.card-b { bottom: 15%; left: 10%; animation-delay: -3s; }
+
+.content-section, .process, .security { padding: 6rem 4%; max-width: 1200px; margin: 0 auto; }
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; margin-top: 4rem; }
+.feature-icon { display: inline-flex; width: 48px; height: 48px; background: rgba(212, 175, 55, 0.1); color: var(--gold); border-radius: 12px; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1.5rem; }
+.process { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; background: var(--bg-card); border-radius: 24px; padding: 6rem; margin: 4rem auto; }
+.steps { display: flex; flex-direction: column; gap: 3rem; }
+.steps b { color: var(--gold); font-family: monospace; font-size: 1.25rem; display: block; margin-bottom: 0.5rem; }
+.security { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 40vh; }
+footer { text-align: center; padding: 3rem 4%; border-top: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 0.5rem; color: var(--text-muted); font-size: 0.85rem; }
+
+
+/* ==================================================
+   Auth / Login Layout
+   ================================================== */
+body.auth {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 2rem 4%;
+}
+.auth-brand { position: absolute; top: 2rem; left: 4%; }
+.auth-layout {
+    display: grid;
+    grid-template-columns: 1fr 450px;
+    gap: 6rem;
+    max-width: 1200px;
+    margin: auto;
+    align-items: center;
+    width: 100%;
+}
+.auth-aside h1 { font-size: 3rem; margin-bottom: 1rem; }
+.auth-aside p { margin-bottom: 2rem; }
+.mini-points {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    color: var(--text-main);
+}
+.mini-points span { font-weight: 500; }
+
+.auth-card {
+    background: var(--bg-card);
+    padding: 3rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+.auth-card h2 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+.auth-card p { font-size: 0.95rem; margin-bottom: 2rem; }
+
+/* Forms */
+form label { display: block; margin-bottom: 1.25rem; font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
+form input[type="text"], form input[type="password"] {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    margin-top: 0.5rem;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+form input:focus { outline: none; border-color: var(--gold); }
+.input-wrap { display: flex; position: relative; }
+.input-wrap button.eye {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.input-wrap button.eye:hover { color: #fff; }
+
+.form-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 0.9rem; }
+.check { display: flex; align-items: center; gap: 0.5rem; margin: 0; color: var(--text-main); cursor: pointer; }
+.check input { width: 16px; height: 16px; accent-color: var(--gold); }
+
+.auth-bottom { margin-top: 2rem; text-align: center; }
+.prototype-note { position: absolute; bottom: 2rem; left: 0; right: 0; text-align: center; font-size: 0.75rem; color: rgba(255,255,255,0.3); }
+
+/* Animations */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+/* Mobile */
+@media (max-width: 900px) {
+    .auth-layout { grid-template-columns: 1fr; gap: 3rem; margin-top: 6rem; }
+    .hero, .process { grid-template-columns: 1fr; }
+    .hero-panel { display: none; }
+}

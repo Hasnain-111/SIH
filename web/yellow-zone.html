@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>All Projects — MPLADS</title>
+    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="app" data-page="projects" data-zone="yellow">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <a class="brand" href="index.html">
+            <span class="crest">M</span>
+            <span>MPLADS<small>Monitoring & Risk Analytics</small></span>
+        </a>
+        <div class="nav-label">Overview</div>
+        <a class="side-link" href="dashboard.html">
+            <span class="navicon">▦</span>
+            <span>Dashboard</span>
+        </a>
+        <div class="nav-label">Projects</div>
+        <a class="side-link active" href="projects.html">
+            <span class="navicon">▤</span>
+            <span>All Projects</span>
+        </a>
+                <div class="nav-label">Risk Monitoring</div>
+        <a class="side-link" href="red-zone.html">
+            <span class="navicon" style="color: #ef4444;">?</span>
+            <span>Red Zone</span>
+        </a>
+        <a class="side-link" href="yellow-zone.html">
+            <span class="navicon" style="color: #eab308;">?</span>
+            <span>Yellow Zone</span>
+        </a>
+        <a class="side-link" href="green-zone.html">
+            <span class="navicon" style="color: #22c55e;">?</span>
+            <span>Green Zone</span>
+        </a>
+        <div class="side-bottom">
+            <a class="side-link" href="#">
+                <span class="navicon">?</span>
+                <span>Help</span>
+            </a>
+            <button class="side-link logout-trigger" onclick="window.location.href='index.html'">
+                <span class="navicon">↪</span>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN APP -->
+    <div class="app-main">
+        <header class="topbar">
+            <div class="header-left">
+                <div class="global-search">
+                    <span>⌕</span>
+                    <input id="search-input" placeholder="Search by project ID, MP, work, state or location...">
+                </div>
+            </div>
+            <div class="top-actions">
+                <button class="refresh" onclick="location.reload()"><span>↻</span> Refresh Data</button>
+                <div class="user-chip">
+                    <span class="avatar">AK</span>
+                    <span>Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="page">
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">Project monitoring</p>
+                    <h1>Yellow Zone Projects</h1>
+                    <p>Search and review the complete MPLADS Yellow Zone Projects.</p>
+                </div>
+            </div>
+
+            <section class="registry-summary">
+                <div><small>Total results</small><b id="total-results">0</b></div>
+                <div><small>Current page</small><b id="page-indicator">1 / 1</b></div>
+            </section>
+
+            <div class="filter-panel" style="display:flex; gap: 15px; margin-bottom: 20px; align-items:flex-end;">
+                <label>Status
+                    <select id="filter-status">
+                        <option value="All">All statuses</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Ongoing">Ongoing</option>
+                        <option value="Delayed">Delayed</option>
+                        <option value="Unsanctioned">Unsanctioned</option>
+                    </select>
+                </label>
+                <label>Category (House)
+                    <select id="filter-category">
+                        <option value="All">All Categories</option>
+                        <option value="Lok Sabha">Lok Sabha</option>
+                        <option value="Rajya Sabha">Rajya Sabha</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="panel table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Project ID</th>
+                            <th>MP Name</th>
+                            <th>Work</th>
+                            <th>Category</th>
+                            <th>State</th>
+                            <th>Constituency</th>
+                            <th>Date</th>
+                            <th>Allocation</th>
+                            <th>Approval</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="project-rows">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination" id="pagination-controls" style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+                <!-- Filled by JS -->
+            </div>
+        </main>
+    </div>
+
+    <script src="js/projects.js?v=6"></script>
+</body>
+</html>
+
+

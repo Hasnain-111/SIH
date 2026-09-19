@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Dashboard — MPLADS</title>
+    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="app" data-page="dashboard">
+    <aside class="sidebar">
+        <a class="brand" href="index.html">
+            <span class="crest">M</span>
+            <span>MPLADS<small>Monitoring & Risk Analytics</small></span>
+        </a>
+        <div class="nav-label">Overview</div>
+        <a class="side-link active" href="dashboard.html">
+            <span class="navicon">▦</span>
+            <span>Dashboard</span>
+        </a>
+        <div class="nav-label">Projects</div>
+        <a class="side-link" href="projects.html">
+            <span class="navicon">▤</span>
+            <span>All Projects</span>
+        </a>
+                <div class="nav-label">Risk Monitoring</div>
+        <a class="side-link" href="red-zone.html">
+            <span class="navicon" style="color: #ef4444;">?</span>
+            <span>Red Zone</span>
+        </a>
+        <a class="side-link" href="yellow-zone.html">
+            <span class="navicon" style="color: #eab308;">?</span>
+            <span>Yellow Zone</span>
+        </a>
+        <a class="side-link" href="green-zone.html">
+            <span class="navicon" style="color: #22c55e;">?</span>
+            <span>Green Zone</span>
+        </a>
+        <div class="side-bottom">
+            <a class="side-link" href="#">
+                <span class="navicon">?</span>
+                <span>Help</span>
+            </a>
+            <button class="side-link logout-trigger" onclick="window.location.href='index.html'">
+                <span class="navicon">↪</span>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <div class="app-main">
+        <header class="topbar">
+            <div class="header-left">
+                <div class="global-search">
+                    <span>⌕</span>
+                    <input id="global-search" placeholder="Search by project ID, MP, work, state or location...">
+                </div>
+            </div>
+            <div class="top-actions">
+                <button class="refresh" onclick="location.reload()"><span>↻</span> Refresh Data</button>
+                <div class="user-chip">
+                    <span class="avatar">AK</span>
+                    <span>Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="page">
+            <div class="dashboard-v2">
+                <section class="v2-hero">
+                    <div>
+                        <p class="eyebrow">National Development Monitoring</p>
+                        <h1>Monitoring Dashboard</h1>
+                        <p>AI-assisted overview of MPLADS project risk indicators.</p>
+                        <span class="prototype-status">● Prototype monitoring environment</span>
+                    </div>
+                    <aside>“Development with<br><b>Transparency and Trust</b>”</aside>
+                </section>
+
+                <section class="v2-kpis">
+                    <article class="blue">
+                        <i>▤</i>
+                        <small>TOTAL PROJECTS</small>
+                        <b id="total-projects">Loading...</b>
+                        <span>Across 36 States & UTs</span>
+                    </article>
+                    <article class="red">
+                        <i>!</i>
+                        <small>RED ZONE</small>
+                        <b id="kpi-red-zone">Loading...</b>
+                        <span>Requires priority verification</span>
+                    </article>
+                    <article class="yellow">
+                        <i>◷</i>
+                        <small>YELLOW ZONE</small>
+                        <b id="kpi-yellow-zone">Loading...</b>
+                        <span>Requires further review</span>
+                    </article>
+                    <article class="green">
+                        <i>♜</i>
+                        <small>GREEN ZONE</small>
+                        <b id="kpi-green-zone">Loading...</b>
+                        <span>Lower risk indicators</span>
+                    </article>
+                </section>
+
+                <section class="v2-analytics">
+                    <article class="v2-card risk">
+                        <div class="v2-card-head">
+                            <div>
+                                <h2>▰ Risk Distribution</h2>
+                                <p>Overall project risk levels</p>
+                            </div>
+                        </div>
+                        <div class="v2-risk-body">
+                            <div class="v2-donut">
+                                <span><b id="donut-total-projects">Loading...</b>Total Projects</span>
+                            </div>
+                            <div class="v2-legend">
+                                <p><i class="red"></i><b id="donut-red">-</b>Red Zone</p>
+                                <p><i class="yellow"></i><b id="donut-yellow">-</b>Yellow Zone</p>
+                                <p><i class="green"></i><b id="donut-green">-</b>Green Zone</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="v2-card states">
+                        <div class="v2-card-head">
+                            <div>
+                                <h2>▥ Projects by State</h2>
+                                <p>Top 5 states by number of projects</p>
+                            </div>
+                        </div>
+                        <div class="v2-bars">
+                            <div><b>Uttar Pradesh</b><i><em style="width:100%"></em></i><span>186</span></div>
+                            <div><b>Maharashtra</b><i><em style="width:76%"></em></i><span>142</span></div>
+                            <div><b>Tamil Nadu</b><i><em style="width:69%"></em></i><span>128</span></div>
+                            <div><b>Rajasthan</b><i><em style="width:65%"></em></i><span>121</span></div>
+                            <div><b>Karnataka</b><i><em style="width:53%"></em></i><span>98</span></div>
+                        </div>
+                    </article>
+                </section>
+
+                <section class="v2-lower">
+                    <article class="v2-card queue" style="flex: 1;">
+                        <div class="v2-card-head">
+                            <div>
+                                <h2>▲ Priority Review Queue</h2>
+                                <p>High-risk and notable projects requiring attention</p>
+                            </div>
+                            <a href="projects.html">View All →</a>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="data-table" id="recent-projects-table">
+                                <thead>
+                                    <tr>
+                                        <th>Project Work</th>
+                                        <th>MP NAME</th>
+                                        <th>Constituency</th>
+                                        <th>Cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+                </section>
+
+                <section class="impact-banner">
+                    <div>
+                        <h2>◉ Towards a More Transparent and Accountable India</h2>
+                        <p>Leveraging data and AI to support evidence-based monitoring of development projects.</p>
+                    </div>
+                    <aside>🏆 <b>Prototype</b><small>Smart India Hackathon 2026</small></aside>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/dashboard.js?v=8"></script>
+</body>
+</html>
+

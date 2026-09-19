@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Official Login — MPLADS</title>
+    <link rel="stylesheet" href="css/landing.css">
+</head>
+<body class="auth">
+    <a class="auth-brand brand" href="index.html">
+        <span class="crest">M</span>
+        <span>MPLADS<small>Monitoring & Risk Analytics</small></span>
+    </a>
+    <main class="auth-layout">
+        <section class="auth-aside">
+            <p class="eyebrow light">Authorized official access</p>
+            <h1>Supporting more informed project oversight.</h1>
+            <p>Access the monitoring workspace to review project information and AI-assisted risk indicators.</p>
+            <div class="mini-points">
+                <span>◉ Secure sign-in</span>
+                <span>◉ Role-aware workspace</span>
+                <span>◉ Simulated prototype data</span>
+            </div>
+        </section>
+        <section class="auth-card">
+            <p class="eyebrow">Welcome back</p>
+            <h2>Official Login</h2>
+            <p>Enter your authorized credentials to continue.</p>
+            <form id="login-form" action="dashboard.html" method="GET">
+                <label>Official ID / Email
+                    <input name="email" type="text" placeholder="e.g. official@authority.gov.in" required>
+                </label>
+                <label>Password 
+                    <span class="input-wrap">
+                        <input name="password" type="password" placeholder="Enter password" required>
+                        <button type="button" class="eye" onclick="const p = this.previousElementSibling; if(p.type==='password'){p.type='text';this.textContent='Hide'}else{p.type='password';this.textContent='Show'}">Show</button>
+                    </span>
+                </label>
+                <div class="form-row">
+                    <label class="check">
+                        <input type="checkbox"> <span>Remember me</span>
+                    </label>
+                    <a href="#">Forgot password?</a>
+                </div>
+                <button class="btn btn-gold full" type="submit">Sign in <span>→</span></button>
+            </form>
+            <p class="auth-bottom">Need authorized access? <a href="#">Request Official Access</a></p>
+        </section>
+    </main>
+    <p class="prototype-note">Prototype demonstration only — no real credentials are stored.</p>
+</body>
+</html>
