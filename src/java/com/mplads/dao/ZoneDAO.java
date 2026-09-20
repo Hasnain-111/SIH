@@ -4,40 +4,29 @@ import com.mplads.DBConnection;
 import com.mplads.model.Project;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
  * Reads zone projects from the ML results table (mplads_ml_results).
  * Red = High risk, Yellow = Medium risk, Green = Low risk.
+ *
+ * The ML table has no project_id / approval column, so each ML row is linked to its
+ * record in the `projects` table (in Java, not in SQL) to get project_id (for the
+ * View button) and ida_approval.
  */
 public class ZoneDAO {
 
-    // Preferred query: ML rows + project_id / approval looked up from `projects`
-    // (matched on MP name + work + allocation amount; lowest project_id is used).
-    private static final String SQL_WITH_LOOKUP =
+    private static final String SQL_ZONE_ROWS =
             "SELECT m.mp_name, m.work, m.house, m.state, m.constituency, "
-          + "       m.recommended_date, m.allocation_amount, m.status, "
-          + "       k.project_id AS pid, p.ida_approval AS approval "
-          + "FROM mplads_ml_results m "
-          + "LEFT JOIN (SELECT mp_name, work_, allocation_amount, MIN(project_id) AS project_id "
-          + "           FROM projects GROUP BY mp_name, work_, allocation_amount) k "
-          + "  ON k.mp_name = m.mp_name AND k.work_ = m.work "
-          + " AND k.allocation_amount = m.allocation_amount "
-          + "LEFT JOIN projects p ON p.project_id = k.project_id "
-          + "WHERE LOWER(TRIM(m.risk_level)) = ? "
-          + "ORDER BY m.id";
-
-    // Fallback if the lookup query cannot run: ML columns only
-    private static final String SQL_PLAIN =
-            "SELECT m.mp_name, m.work, m.house, m.state, m.constituency, "
-          + "       m.recommended_date, m.allocation_amount, m.status, "
-          + "       0 AS pid, '' AS approval "
+          + "       m.recommended_date, m.allocation_amount, m.status "
           + "FROM mplads_ml_results m "
           + "WHERE LOWER(TRIM(m.risk_level)) = ? "
           + "ORDER BY m.id";
@@ -45,12 +34,25 @@ public class ZoneDAO {
     /** @param level "high", "medium" or "low" (any letter case) */
     public List<Project> getByRiskLevel(String level) throws Exception {
         String wanted = level.trim().toLowerCase();
+        List<Project> rows = readZoneRows(wanted);
+
+        int linked = 0;
         try {
-            return run(SQL_WITH_LOOKUP, wanted);
-        } catch (Exception lookupFailed) {
-            lookupFailed.printStackTrace();
-            return run(SQL_PLAIN, wanted);
+            Index idx = getIndex();
+            for (Project row : rows) {
+                Project hit = find(idx, row);
+                if (hit != null) {
+                    row.setProjectId(hit.getProjectId());
+                    row.setIdaApproval(hit.getIdaApproval());
+                    linked++;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();   // rows are still returned, just without View links
         }
+        System.out.println("[ZoneDAO] " + wanted + " risk: " + rows.size()
+                + " rows, " + linked + " linked to projects table");
+        return rows;
     }
 
     /** Number of records per risk level: keys "high", "medium", "low". */
@@ -76,25 +78,23 @@ public class ZoneDAO {
         return counts;
     }
 
-    private List<Project> run(String sql, String wanted) throws Exception {
+    private List<Project> readZoneRows(String wanted) throws Exception {
         List<Project> list = new ArrayList<>();
         try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(SQL_ZONE_ROWS)) {
 
             ps.setString(1, wanted);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Project p = new Project();
-                    p.setProjectId(rs.getInt("pid"));              // 0 when not found
                     p.setMpName(rs.getString("mp_name"));
                     p.setWork(rs.getString("work"));
                     p.setState(rs.getString("state"));
                     p.setConstituency(rs.getString("constituency"));
                     p.setDate(rs.getString("recommended_date"));
                     BigDecimal amt = rs.getBigDecimal("allocation_amount");
-                    p.setAllocationAmount(amt == null ? 0 : amt.intValue());
-                    p.setIdaApproval(rs.getString("approval"));
+                    p.setAllocationAmount(amt == null ? 0 : amt.setScale(0, RoundingMode.HALF_UP).intValue());
                     p.setProjectStatus(rs.getString("status"));
                     p.setHouse(rs.getString("house"));
                     list.add(p);
@@ -102,5 +102,79 @@ public class ZoneDAO {
             }
         }
         return list;
+    }
+
+    // ------------------------------------------------------------------
+    // Linking ML rows to the projects table
+    // ------------------------------------------------------------------
+
+    /** Two lookup maps built from the projects table; the lowest project_id wins. */
+    static final class Index {
+        final Map<String, Project> strong = new HashMap<>();  // MP + work + amount + state + constituency + date
+        final Map<String, Project> weak = new HashMap<>();    // MP + work + amount
+    }
+
+    private static final long CACHE_MS = 5 * 60 * 1000;
+    private static Index cachedIndex;
+    private static long cachedAt = 0;
+
+    private static synchronized Index getIndex() {
+        long now = System.currentTimeMillis();
+        if (cachedIndex != null && now - cachedAt < CACHE_MS) {
+            return cachedIndex;
+        }
+        List<Project> all = new ProjectDAO().getAllProjects();
+        Index idx = buildIndex(all);
+        if (!all.isEmpty()) {      // do not cache a failed / empty load
+            cachedIndex = idx;
+            cachedAt = now;
+        }
+        return idx;
+    }
+
+    static Index buildIndex(List<Project> all) {
+        Index idx = new Index();
+        for (Project p : all) {
+            putLowest(idx.weak, weakKey(p), p);
+            putLowest(idx.strong, strongKey(p), p);
+        }
+        return idx;
+    }
+
+    private static void putLowest(Map<String, Project> map, String key, Project p) {
+        Project cur = map.get(key);
+        if (cur == null || p.getProjectId() < cur.getProjectId()) {
+            map.put(key, p);
+        }
+    }
+
+    /** Best match first (all fields), then MP + work + amount. Null if nothing matches. */
+    static Project find(Index idx, Project row) {
+        Project hit = idx.strong.get(strongKey(row));
+        if (hit == null) {
+            hit = idx.weak.get(weakKey(row));
+        }
+        return hit;
+    }
+
+    private static String weakKey(Project p) {
+        return norm(p.getMpName()) + "\u001f" + normWork(p.getWork()) + "\u001f" + p.getAllocationAmount();
+    }
+
+    private static String strongKey(Project p) {
+        return weakKey(p) + "\u001f" + norm(p.getState()) + "\u001f"
+                + norm(p.getConstituency()) + "\u001f" + norm(p.getDate());
+    }
+
+    /** Trim, collapse spaces, ignore letter case. */
+    private static String norm(String s) {
+        if (s == null) return "";
+        return s.trim().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
+    }
+
+    /** The ML table stores work as varchar(500), so compare only the first 500 characters. */
+    private static String normWork(String s) {
+        String n = norm(s);
+        return n.length() > 500 ? n.substring(0, 500) : n;
     }
 }
