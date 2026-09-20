@@ -1,53 +1,75 @@
 document.addEventListener('DOMContentLoaded', () => {
     const tbody = document.querySelector('#recent-projects-table tbody');
-    
-    // Fetch recent projects from Java backend
-    if (tbody) {
-        fetch('/MPLADs/api/projects')
-            .then(res => res.json())
-            .then(projects => {
-                // Update total stats safely
-                try {
-                    const elProjects = document.getElementById('total-projects');
-                    if (elProjects) elProjects.textContent = projects.length.toLocaleString();
-                    
-                    const elDonutTotal = document.getElementById('donut-total-projects');
-                    if (elDonutTotal) elDonutTotal.textContent = projects.length.toLocaleString();
-                    
-                    // Zone counts based on project_status
-                    const redCount = projects.filter(p => p.project_status === 'Unsanctioned').length;
-                    const yellowCount = projects.filter(p => p.project_status === 'Delayed').length;
-                    const greenCount = projects.filter(p => p.project_status === 'Completed' || p.project_status === 'Ongoing').length;
-                    
-                    // KPI Cards
-                    const elRed = document.getElementById('kpi-red-zone');
-                    if (elRed) elRed.textContent = redCount.toLocaleString();
-                    
-                    const elYellow = document.getElementById('kpi-yellow-zone');
-                    if (elYellow) elYellow.textContent = yellowCount.toLocaleString();
-                    
-                    const elGreen = document.getElementById('kpi-green-zone');
-                    if (elGreen) elGreen.textContent = greenCount.toLocaleString();
-                    
-                    // Donut legend
-                    const redPct = projects.length ? ((redCount / projects.length) * 100).toFixed(1) : 0;
-                    const yellowPct = projects.length ? ((yellowCount / projects.length) * 100).toFixed(1) : 0;
-                    const greenPct = projects.length ? ((greenCount / projects.length) * 100).toFixed(1) : 0;
-                    
-                    if (document.getElementById('donut-red')) document.getElementById('donut-red').textContent = redCount + ' (' + redPct + '%)';
-                    if (document.getElementById('donut-yellow')) document.getElementById('donut-yellow').textContent = yellowCount + ' (' + yellowPct + '%)';
-                    if (document.getElementById('donut-green')) document.getElementById('donut-green').textContent = greenCount + ' (' + greenPct + '%)';
-                    
-                } catch (err) {
-                    console.error("Error calculating stats:", err);
+
+    // ---- Zone counts (Red = High risk, Yellow = Medium, Green = Low) ----
+    // Same source and rule as the Red / Yellow / Green Zone pages (mplads_ml_results.risk_level),
+    // so these numbers always equal "Total results" on those pages.
+    function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    }
+
+    function loadZoneCounts() {
+        fetch('/MPLADs/api/zone-counts')
+            .then(res => {
+                if (!res.ok) throw new Error('Bad response: ' + res.status);
+                return res.json();
+            })
+            .then(c => {
+                const red = Number(c.high) || 0;
+                const yellow = Number(c.medium) || 0;
+                const green = Number(c.low) || 0;
+                const sum = red + yellow + green;
+                const pct = n => sum ? ((n / sum) * 100).toFixed(1) : '0.0';
+
+                // KPI cards
+                setText('kpi-red-zone', red.toLocaleString());
+                setText('kpi-yellow-zone', yellow.toLocaleString());
+                setText('kpi-green-zone', green.toLocaleString());
+
+                // Donut legend
+                setText('donut-red', red.toLocaleString() + ' (' + pct(red) + '%)');
+                setText('donut-yellow', yellow.toLocaleString() + ' (' + pct(yellow) + '%)');
+                setText('donut-green', green.toLocaleString() + ' (' + pct(green) + '%)');
+
+                // Donut ring drawn from the same numbers
+                const ring = document.querySelector('.v2-donut');
+                if (ring && sum > 0) {
+                    const r = (red / sum) * 100;
+                    const y = r + (yellow / sum) * 100;
+                    ring.style.background = 'conic-gradient(#ef4444 0% ' + r + '%, #eab308 ' + r + '% ' + y + '%, #22c55e ' + y + '% 100%)';
                 }
-                
-                // Priority Review Queue shows ONE row for records that share the same
-                // MP name + work + allocation amount (lowest project_id is kept).
-                // KPI cards / donut above still use ALL projects, so totals do not change.
+            })
+            .catch(err => {
+                console.error('Failed to load zone counts:', err);
+                ['kpi-red-zone', 'kpi-yellow-zone', 'kpi-green-zone'].forEach(id => setText(id, '—'));
+                ['donut-red', 'donut-yellow', 'donut-green'].forEach(id => setText(id, '—'));
+            });
+    }
+    loadZoneCounts();
+
+    // ---- Total Projects: every record in the projects table ----
+    fetch('/MPLADs/api/projects')
+        .then(res => res.json())
+        .then(projects => {
+            setText('total-projects', projects.length.toLocaleString());
+            setText('donut-total-projects', projects.length.toLocaleString());
+        })
+        .catch(err => console.error('Failed to load total projects:', err));
+
+    // ---- Priority Review Queue: RED ZONE (High risk) projects only ----
+    if (tbody) {
+        fetch('/MPLADs/api/zone-projects?level=High')
+            .then(res => {
+                if (!res.ok) throw new Error('Bad response: ' + res.status);
+                return res.json();
+            })
+            .then(redProjects => {
+                // Show ONE row for records that share the same MP name + work + allocation
+                // amount (lowest project_id is kept).
                 const norm = v => String(v == null ? '' : v).trim();
                 const seen = new Set();
-                const uniqueProjects = projects
+                const uniqueProjects = redProjects
                     .slice()
                     .sort((a, b) => Number(a.project_id) - Number(b.project_id))
                     .filter(p => {
@@ -57,30 +79,40 @@ document.addEventListener('DOMContentLoaded', () => {
                         return true;
                     });
 
+                if (uniqueProjects.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No Red Zone projects found.</td></tr>';
+                    return;
+                }
+
                 // Pagination Logic (30 per page)
                 const itemsPerPage = 30;
                 let currentPage = 1;
-                
+
                 function displayPage(page) {
                     tbody.innerHTML = '';
                     const start = (page - 1) * itemsPerPage;
                     const end = start + itemsPerPage;
                     const paginatedItems = uniqueProjects.slice(start, end);
-                    
+
                     paginatedItems.forEach(project => {
                         const tr = document.createElement('tr');
+                        const work = project.work_ || 'N/A';
+                        // project_id is 0 when no matching record was found in the projects table
+                        const workCell = project.project_id
+                            ? `<a href="project-details.html?id=${project.project_id}" style="color: var(--accent-color); text-decoration: none;">${work}</a>`
+                            : work;
                         tr.innerHTML = `
-                            <td><a href="project-details.html?id=${project.project_id}" style="color: var(--accent-color); text-decoration: none;">${project.work_ || 'N/A'}</a></td>
+                            <td>${workCell}</td>
                             <td>${project.mp_name || 'N/A'}</td>
                             <td>${project.constituency || 'N/A'}</td>
                             <td>₹${(project.allocation_amount || 0).toLocaleString('en-IN')}</td>
                         `;
                         tbody.appendChild(tr);
                     });
-                    
+
                     const totalPages = Math.ceil(uniqueProjects.length / itemsPerPage) || 1;
-                    
-                    // Add Improved Pagination Controls
+
+                    // Pagination controls
                     const paginationRow = document.createElement('tr');
                     paginationRow.innerHTML = `
                         <td colspan="4" style="text-align: center; padding: 25px;">
@@ -92,19 +124,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         </td>
                     `;
                     tbody.appendChild(paginationRow);
-                    
-                    if(document.getElementById('prevBtn')) {
+
+                    if (document.getElementById('prevBtn')) {
                         document.getElementById('prevBtn').addEventListener('click', () => { currentPage--; displayPage(currentPage); });
                     }
-                    if(document.getElementById('nextBtn')) {
+                    if (document.getElementById('nextBtn')) {
                         document.getElementById('nextBtn').addEventListener('click', () => { currentPage++; displayPage(currentPage); });
                     }
                 }
-                
+
                 displayPage(currentPage);
             })
             .catch(e => {
-                console.error("Failed to load dashboard data:", e);
+                console.error("Failed to load Red Zone projects:", e);
                 tbody.innerHTML = '<tr><td colspan="4" style="color:red;">Error loading data from backend</td></tr>';
             });
     }

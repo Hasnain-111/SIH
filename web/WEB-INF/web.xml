@@ -8,6 +8,18 @@
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>com.mplads.servlet.LoginServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Zoneprojectservlet</servlet-name>
+        <servlet-class>com.mplads.servlet.Zoneprojectservlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ZoneProjectServlet</servlet-name>
+        <servlet-class>com.mplads.servlet.ZoneProjectServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ZoneCountServlet</servlet-name>
+        <servlet-class>com.mplads.servlet.ZoneCountServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>RegistrationServlet</servlet-name>
         <url-pattern>/RegistrationServlet</url-pattern>
@@ -15,5 +27,17 @@
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Zoneprojectservlet</servlet-name>
+        <url-pattern>/Zoneprojectservlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ZoneProjectServlet</servlet-name>
+        <url-pattern>/ZoneProjectServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ZoneCountServlet</servlet-name>
+        <url-pattern>/ZoneCountServlet</url-pattern>
     </servlet-mapping>
 </web-app>

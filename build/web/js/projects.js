@@ -7,9 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const pageIndicator = document.getElementById('page-indicator');
     const paginationControls = document.getElementById('pagination-controls');
 
-    // Registry page (projects.html) has no data-zone; zone pages keep the old layout
-    const isRegistry = !document.body.getAttribute('data-zone');
-    const COLS = isRegistry ? 10 : 11;   // table columns (Project ID column removed on registry)
+    // Registry page (projects.html) has no data-zone.
+    // Zone pages: red -> High risk, yellow -> Medium risk, green -> Low risk (from mplads_ml_results)
+    const zone = document.body.getAttribute('data-zone');
+    const isRegistry = !zone;
+    const ZONE_LEVELS = { red: 'High', yellow: 'Medium', green: 'Low' };
+    const DATA_URL = ZONE_LEVELS[zone]
+        ? '/MPLADs/api/zone-projects?level=' + ZONE_LEVELS[zone]
+        : '/MPLADs/api/projects';
+    const COLS = 10;   // table columns (Project ID column is not shown)
 
     let allProjects = [];
     let filteredProjects = [];   // every record matching search/filters (used for "Total results")
@@ -18,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const itemsPerPage = 50;
 
     // Fetch projects from the Java Servlet backend
-    fetch('/MPLADs/api/projects')
+    fetch(DATA_URL)
         .then(response => {
             if (!response.ok) throw new Error('Network response was not ok');
             return response.json();
@@ -37,15 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 district: p.constituency,
                 ida_approval: p.ida_approval || 'N/A'
             }));
-            
-            const zone = document.body.getAttribute('data-zone');
-            if (zone === 'red') {
-                allProjects = allProjects.filter(p => p.status === 'Unsanctioned');
-            } else if (zone === 'yellow') {
-                allProjects = allProjects.filter(p => p.status === 'Delayed');
-            } else if (zone === 'green') {
-                allProjects = allProjects.filter(p => p.status === 'Completed' || p.status === 'Ongoing');
-            }
             
             filteredProjects = allProjects;
             applyDedupe();
@@ -110,10 +107,12 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (project.status === 'Unsanctioned') badgeClass += 'unsanctioned';
             else badgeClass += 'tendered';
 
-            const idCell = isRegistry ? '' : `<td><b>${project.id}</b></td>`;
+            // "View" needs a project id (used only for the link, never displayed)
+            const viewCell = project.id
+                ? `<a class="view-link" style="color: #3b82f6; text-decoration: none; font-weight: bold;" href="project-details.html?id=${project.id}">View →</a>`
+                : '—';
 
             tr.innerHTML = `
-                ${idCell}
                 <td>${project.mp_name || 'N/A'}</td>
                 <td class="work">${project.name}</td>
                 <td>${project.category}</td>
@@ -123,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="amount">${project.cost}</td>
                 <td>${project.ida_approval}</td>
                 <td><span class="${badgeClass}" style="padding: 4px 8px; border-radius: 4px; font-size: 0.85em; background: rgba(255,255,255,0.1);">${project.status}</span></td>
-                <td><a class="view-link" style="color: #3b82f6; text-decoration: none; font-weight: bold;" href="project-details.html?id=${project.id}">View →</a></td>
+                <td>${viewCell}</td>
             `;
             tbody.appendChild(tr);
         });
