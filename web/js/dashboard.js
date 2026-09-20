@@ -42,6 +42,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error("Error calculating stats:", err);
                 }
                 
+                // Priority Review Queue shows ONE row for records that share the same
+                // MP name + work + allocation amount (lowest project_id is kept).
+                // KPI cards / donut above still use ALL projects, so totals do not change.
+                const norm = v => String(v == null ? '' : v).trim();
+                const seen = new Set();
+                const uniqueProjects = projects
+                    .slice()
+                    .sort((a, b) => Number(a.project_id) - Number(b.project_id))
+                    .filter(p => {
+                        const key = JSON.stringify([norm(p.mp_name), norm(p.work_), p.allocation_amount]);
+                        if (seen.has(key)) return false;
+                        seen.add(key);
+                        return true;
+                    });
+
                 // Pagination Logic (30 per page)
                 const itemsPerPage = 30;
                 let currentPage = 1;
@@ -50,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     tbody.innerHTML = '';
                     const start = (page - 1) * itemsPerPage;
                     const end = start + itemsPerPage;
-                    const paginatedItems = projects.slice(start, end);
+                    const paginatedItems = uniqueProjects.slice(start, end);
                     
                     paginatedItems.forEach(project => {
                         const tr = document.createElement('tr');
@@ -63,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         tbody.appendChild(tr);
                     });
                     
-                    const totalPages = Math.ceil(projects.length / itemsPerPage);
+                    const totalPages = Math.ceil(uniqueProjects.length / itemsPerPage) || 1;
                     
                     // Add Improved Pagination Controls
                     const paginationRow = document.createElement('tr');
@@ -72,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div style="display:inline-flex; align-items:center; gap: 20px; background: rgba(255,255,255,0.03); padding: 10px 24px; border-radius: 30px; border: 1px solid var(--border-light);">
                                 <button id="prevBtn" ${page === 1 ? 'disabled' : ''} style="background:transparent; border:none; color: ${page === 1 ? '#4b5563' : '#f3f4f6'}; cursor: ${page === 1 ? 'not-allowed' : 'pointer'}; font-weight:600; font-size: 0.9rem; transition: color 0.2s;">← Previous</button>
                                 <span style="font-weight: 600; color: #d4af37; font-size: 0.95rem; padding: 0 10px;">Page ${page} of ${totalPages}</span>
-                                <button id="nextBtn" ${end >= projects.length ? 'disabled' : ''} style="background:transparent; border:none; color: ${end >= projects.length ? '#4b5563' : '#f3f4f6'}; cursor: ${end >= projects.length ? 'not-allowed' : 'pointer'}; font-weight:600; font-size: 0.9rem; transition: color 0.2s;">Next →</button>
+                                <button id="nextBtn" ${end >= uniqueProjects.length ? 'disabled' : ''} style="background:transparent; border:none; color: ${end >= uniqueProjects.length ? '#4b5563' : '#f3f4f6'}; cursor: ${end >= uniqueProjects.length ? 'not-allowed' : 'pointer'}; font-weight:600; font-size: 0.9rem; transition: color 0.2s;">Next →</button>
                             </div>
                         </td>
                     `;

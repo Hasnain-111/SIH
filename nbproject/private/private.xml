@@ -8,7 +8,6 @@
             <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/model/Project.java</file>
             <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/dao/ProjectDAO.java</file>
             <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/service/MLService.java</file>
-            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/servlet/ProjectServlet.java</file>
             <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/servlet/AnalyzeServlet.java</file>
             <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/dao/RiskDAO.java</file>
             <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/servlet/DashboardServlet.java</file>
@@ -24,6 +23,7 @@
             <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/js/project-details.js</file>
             <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/js/risk-analysis.js</file>
             <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/index.html</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/login.html</file>
         </group>
     </open-files>
 </project-private>

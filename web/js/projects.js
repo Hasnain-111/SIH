@@ -7,8 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const pageIndicator = document.getElementById('page-indicator');
     const paginationControls = document.getElementById('pagination-controls');
 
+    // Registry page (projects.html) has no data-zone; zone pages keep the old layout
+    const isRegistry = !document.body.getAttribute('data-zone');
+    const COLS = isRegistry ? 10 : 11;   // table columns (Project ID column removed on registry)
+
     let allProjects = [];
-    let filteredProjects = [];
+    let filteredProjects = [];   // every record matching search/filters (used for "Total results")
+    let displayProjects = [];    // what is shown in the table (duplicates collapsed on registry)
     let currentPage = 1;
     const itemsPerPage = 50;
 
@@ -43,12 +48,34 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             filteredProjects = allProjects;
+            applyDedupe();
             renderProjects();
         })
         .catch(error => {
             console.error('Error fetching projects:', error);
-            if (tbody) tbody.innerHTML = '<tr><td colspan="11" style="color:red; text-align:center;">Failed to load projects from the database. Make sure the Tomcat server is running.</td></tr>';
+            if (tbody) tbody.innerHTML = '<tr><td colspan="' + COLS + '" style="color:red; text-align:center;">Failed to load projects from the database. Make sure the Tomcat server is running.</td></tr>';
         });
+
+    // Show only ONE row for records that share the same MP name + work + allocation amount.
+    // The record with the lowest Project ID is the one shown. Project ID is used only
+    // internally (for choosing the record and for the "View" link), never displayed here.
+    function applyDedupe() {
+        if (!isRegistry) {
+            displayProjects = filteredProjects;
+            return;
+        }
+        const norm = v => String(v == null ? '' : v).trim();
+        const sorted = filteredProjects.slice().sort((a, b) => Number(a.id) - Number(b.id));
+        const seen = new Set();
+        displayProjects = [];
+        sorted.forEach(p => {
+            const key = JSON.stringify([norm(p.mp_name), norm(p.name), p.cost]);
+            if (!seen.has(key)) {
+                seen.add(key);
+                displayProjects.push(p);
+            }
+        });
+    }
 
     function renderProjects() {
         if (!tbody) return;
@@ -58,20 +85,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (totalResults) totalResults.textContent = filteredProjects.length;
 
         if (filteredProjects.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;">No projects found matching the criteria.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="' + COLS + '" style="text-align:center;">No projects found matching the criteria.</td></tr>';
             if(paginationControls) paginationControls.innerHTML = '';
             if(pageIndicator) pageIndicator.textContent = '0 / 0';
             return;
         }
 
-        const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+        const totalPages = Math.ceil(displayProjects.length / itemsPerPage) || 1;
         if (currentPage > totalPages) currentPage = totalPages;
         
         if(pageIndicator) pageIndicator.textContent = `${currentPage} / ${totalPages}`;
 
         const start = (currentPage - 1) * itemsPerPage;
         const end = start + itemsPerPage;
-        const paginatedItems = filteredProjects.slice(start, end);
+        const paginatedItems = displayProjects.slice(start, end);
 
         paginatedItems.forEach(project => {
             const tr = document.createElement('tr');
@@ -83,8 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (project.status === 'Unsanctioned') badgeClass += 'unsanctioned';
             else badgeClass += 'tendered';
 
+            const idCell = isRegistry ? '' : `<td><b>${project.id}</b></td>`;
+
             tr.innerHTML = `
-                <td><b>${project.id}</b></td>
+                ${idCell}
                 <td>${project.mp_name || 'N/A'}</td>
                 <td class="work">${project.name}</td>
                 <td>${project.category}</td>
@@ -144,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         currentPage = 1;
+        applyDedupe();
         renderProjects();
     }
 
