@@ -51,17 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'blue';
     }
 
-    function getRiskZone(status) {
-        if (status === 'Unsanctioned') return { zone: 'RED ZONE', cls: 'red', score: 82, desc: 'Timeline and allocation pattern requires verification.' };
-        if (status === 'Delayed') return { zone: 'YELLOW ZONE', cls: 'yellow', score: 55, desc: 'Moderate indicators detected. Further review recommended.' };
-        return { zone: 'GREEN ZONE', cls: 'green', score: 18, desc: 'Lower risk indicators. Project proceeding normally.' };
-    }
-
     function renderDetails(p) {
         const status = p.project_status || 'Ongoing';
         const pillClass = getStatusPillClass(status);
         const statusTextClass = getStatusTextClass(status);
-        const risk = getRiskZone(status);
         const allocationCr = ((p.allocation_amount || 0) / 10000000).toFixed(2);
 
         container.innerHTML = `
@@ -71,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="detail-status">
                     <span class="status-pill ${pillClass}">${status}</span>
                 </div>
-                <p class="project-id">Project #${p.project_id}</p>
                 <h1>${p.work_ || 'Project Details'}</h1>
                 <p class="breadcrumb">${p.state || 'N/A'}<span>•</span>${p.constituency || 'N/A'}<span>•</span>${p.house || 'General'}</p>
             </div>
@@ -127,15 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <!-- AI RISK ASSESSMENT -->
                 <div class="ai-card">
                     <h3>AI Risk Assessment</h3>
-                    <div class="risk-score">${risk.score}<small> / 100</small></div>
-                    <div class="risk-zone ${risk.cls}"><span class="dot"></span> ${risk.zone}</div>
-                    <div class="risk-label">Potential Risk Indicator</div>
-                    <div class="risk-desc">${risk.desc}</div>
-                    <div class="risk-meta">
-                        <b>Prototype AI assessment</b>
-                        Generated today, ${new Date().toLocaleTimeString('en-IN', {hour: '2-digit', minute: '2-digit', hour12: true})}
-                    </div>
-                    <button class="btn-ai" onclick="runAnalysis(${p.project_id})">Run AI Analysis →</button>
+                    <button class="btn-ai" id="run-analysis-btn" onclick="runAnalysis(${p.project_id})">Run AI Analysis →</button>
+                    <div id="analysis-result"></div>
                 </div>
             </div>
 
@@ -148,10 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div>
                             <div class="info-label">Allocation Amount</div>
                             <div class="info-value">₹${allocationCr} Cr</div>
-                        </div>
-                        <div>
-                            <div class="info-label">Project ID</div>
-                            <div class="info-value">${p.project_id}</div>
                         </div>
                     </div>
                 </div>
@@ -181,20 +162,76 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// AI Analysis trigger
-function runAnalysis(projectId) {
-    const btn = document.querySelector('.btn-ai');
-    if (btn) btn.textContent = 'Analyzing...';
+// ---------- AI Analysis ----------
+function escapeHtml(v) {
+    return String(v == null ? '' : v)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 
-    fetch('/MPLADs/api/analyze?id=' + projectId)
-        .then(r => r.json())
-        .then(analysis => {
-            if (btn) btn.textContent = '✓ Analysis Complete';
-            alert('AI Analysis Complete!\n\nRisk Score: ' + (analysis.risk_score || 'N/A') + '\nRecommendation: ' + (analysis.recommendation || 'No anomalies detected.'));
+function showAnalysisError(msg) {
+    const box = document.getElementById('analysis-result');
+    if (box) {
+        box.innerHTML = '<p style="margin-top:20px; padding:12px 14px; border-radius:8px; ' +
+            'background:rgba(239,68,68,0.12); color:#fca5a5; font-size:0.95rem;">' +
+            escapeHtml(msg) + '</p>';
+    }
+}
+
+function showAnalysisResult(a) {
+    const box = document.getElementById('analysis-result');
+    if (!box) return;
+
+    const score = Number(a.risk_score);
+    const anomaly = Number(a.anomaly_score);
+    const level = String(a.risk_level || 'N/A');
+    const colors = {
+        High:   { fg: '#f87171', bg: 'rgba(239,68,68,0.15)' },
+        Medium: { fg: '#facc15', bg: 'rgba(234,179,8,0.15)' },
+        Low:    { fg: '#4ade80', bg: 'rgba(34,197,94,0.15)' }
+    };
+    const c = colors[level] || { fg: '#e5e7eb', bg: 'rgba(255,255,255,0.08)' };
+
+    const rows = [
+        ['Risk Score', isNaN(score) ? 'N/A' : score.toFixed(1) + ' / 100'],
+        ['Risk Level', '<span style="display:inline-block; padding:3px 12px; border-radius:20px; font-weight:700; ' +
+            'color:' + c.fg + '; background:' + c.bg + ';">' + escapeHtml(level) + '</span>'],
+        ['Anomaly Score', isNaN(anomaly) ? 'N/A' : anomaly.toFixed(3)],
+        ['Recommendation', escapeHtml(a.recommendation || 'No anomalies detected.')],
+        ['Model Version', escapeHtml(a.model_version || 'N/A')]
+    ];
+
+    const cell = 'padding:10px 8px; border-bottom:1px solid rgba(255,255,255,0.08); vertical-align:top;';
+    box.innerHTML =
+        '<table style="width:100%; border-collapse:collapse; margin-top:22px; font-size:0.95rem;">' +
+        '<thead><tr><th colspan="2" style="text-align:left; padding:0 8px 10px; font-size:0.75rem; ' +
+        'letter-spacing:0.08em; text-transform:uppercase; color:#d4af37;">Analysis Result</th></tr></thead><tbody>' +
+        rows.map(r => '<tr><td style="' + cell + ' color:#9ca3af; width:38%;">' + r[0] + '</td>' +
+                      '<td style="' + cell + ' color:#f3f4f6; font-weight:600;">' + r[1] + '</td></tr>').join('') +
+        '</tbody></table>';
+}
+
+function runAnalysis(projectId) {
+    const btn = document.getElementById('run-analysis-btn');
+    const box = document.getElementById('analysis-result');
+    if (box) box.innerHTML = '';
+    if (btn) { btn.textContent = 'Analyzing...'; btn.disabled = true; }
+
+    fetch('/MPLADs/api/analyze?id=' + encodeURIComponent(projectId))
+        .then(r => r.json().catch(() => ({ error: 'Invalid response from server.' }))
+            .then(data => ({ ok: r.ok, data })))
+        .then(({ ok, data }) => {
+            if (!ok || data.error) {
+                showAnalysisError(data.error || 'Analysis failed. Please try again.');
+            } else {
+                showAnalysisResult(data);
+            }
         })
         .catch(e => {
             console.log('ML Service unavailable:', e);
-            if (btn) btn.textContent = 'Run AI Analysis →';
-            alert('ML Service is not running. Start the Flask server first.');
+            showAnalysisError('ML Service is not running. Start the Flask server first.');
+        })
+        .finally(() => {
+            if (btn) { btn.textContent = 'Run AI Analysis →'; btn.disabled = false; }
         });
 }
