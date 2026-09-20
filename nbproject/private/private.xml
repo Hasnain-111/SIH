@@ -3,14 +3,27 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/hasnain/Desktop/SIH/web/signup.html</file>
-            <file>file:/Users/hasnain/Desktop/SIH/src/java/com/mplads/DBConnection.java</file>
-            <file>file:/Users/hasnain/Desktop/SIH/src/java/com/mplads/servlet/RegistrationServlet.java</file>
-            <file>file:/Users/hasnain/Desktop/SIH/web/login.html</file>
-            <file>file:/Users/hasnain/Desktop/SIH/src/java/com/mplads/servlet/LoginServlet.java</file>
-            <file>file:/Users/hasnain/Desktop/SIH/src/java/com/mplads/servlet/ProjectServlet.java</file>
-            <file>file:/Users/hasnain/Desktop/SIH/src/java/com/mplads/servlet/AnalyzeServlet.java</file>
-            <file>file:/Users/hasnain/Desktop/SIH/src/java/com/mplads/dao/ProjectDAO.java</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/DBConnection.java</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/TestDB.java</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/model/Project.java</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/dao/ProjectDAO.java</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/service/MLService.java</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/servlet/AnalyzeServlet.java</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/dao/RiskDAO.java</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/src/java/com/mplads/servlet/DashboardServlet.java</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/dashboard.html</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/projects.html</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/project-details.html</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/risk-analysis.html</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/css/style.css</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/css/dashboard.css</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/css/projects.css</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/js/dashboard.js</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/js/projects.js</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/js/project-details.js</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/js/risk-analysis.js</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/index.html</file>
+            <file>file:/C:/Users/RIFAT%20ALIA/MPLADs/web/login.html</file>
         </group>
     </open-files>
 </project-private>
