@@ -8,6 +8,9 @@
             <file>file:/Users/hasnain/Desktop/SIH/src/java/com/mplads/servlet/RegistrationServlet.java</file>
             <file>file:/Users/hasnain/Desktop/SIH/web/login.html</file>
             <file>file:/Users/hasnain/Desktop/SIH/src/java/com/mplads/servlet/LoginServlet.java</file>
+            <file>file:/Users/hasnain/Desktop/SIH/src/java/com/mplads/servlet/ProjectServlet.java</file>
+            <file>file:/Users/hasnain/Desktop/SIH/src/java/com/mplads/servlet/AnalyzeServlet.java</file>
+            <file>file:/Users/hasnain/Desktop/SIH/src/java/com/mplads/dao/ProjectDAO.java</file>
         </group>
     </open-files>
 </project-private>
