@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Request Official Access — MPLADS</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(
+                    circle at 15% 20%,
+                    rgba(212, 175, 55, 0.10),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 85% 80%,
+                    rgba(212, 175, 55, 0.07),
+                    transparent 30%
+                ),
+                #0b0f14;
+            color: white;
+        }
+
+        /* =========================
+           BRAND
+        ========================= */
+
+        .auth-brand {
+            position: absolute;
+            top: 28px;
+            left: 45px;
+
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            text-decoration: none;
+            color: white;
+        }
+
+        .crest {
+            width: 42px;
+            height: 42px;
+
+            border: 1px solid #d4af37;
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #d4af37;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .brand-name {
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+        }
+
+        .brand-name small {
+            display: block;
+            margin-top: 4px;
+
+            color: #aeb5bd;
+            font-size: 9px;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .auth-layout {
+            width: min(1180px, 92%);
+            min-height: 100vh;
+
+            margin: auto;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            gap: 80px;
+            align-items: center;
+
+            padding: 100px 0 50px;
+        }
+
+        /* =========================
+           LEFT SIDE
+        ========================= */
+
+        .auth-aside {
+            padding: 30px 10px;
+        }
+
+        .eyebrow {
+            display: inline-block;
+
+            margin-bottom: 18px;
+
+            color: #d4af37;
+
+            font-size: 12px;
+            font-weight: bold;
+
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .auth-aside h1 {
+            max-width: 570px;
+
+            margin-bottom: 25px;
+
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: clamp(38px, 5vw, 62px);
+            line-height: 1.08;
+            font-weight: 500;
+        }
+
+        .auth-aside > p:not(.eyebrow) {
+            max-width: 520px;
+
+            color: #aeb5bd;
+
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        /* =========================
+           CARD
+        ========================= */
+
+        .auth-card {
+            width: 100%;
+            max-width: 560px;
+
+            margin-left: auto;
+
+            padding: 42px;
+
+            background: rgba(20, 25, 32, 0.96);
+
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            border-radius: 18px;
+
+            box-shadow:
+                0 25px 70px rgba(0, 0, 0, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        }
+
+        .auth-card h2 {
+            margin-bottom: 28px;
+
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 34px;
+            font-weight: 500;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-grid {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 20px;
+        }
+
+        label {
+            display: flex;
+            flex-direction: column;
+
+            gap: 8px;
+
+            color: #d8dde2;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            height: 48px;
+
+            padding: 0 14px;
+
+            border: 1px solid #343c46;
+            border-radius: 8px;
+
+            background: #11161c;
+            color: white;
+
+            outline: none;
+
+            font-size: 14px;
+
+            transition: 0.25s ease;
+        }
+
+        input::placeholder {
+            color: #69727d;
+        }
+
+        input:focus {
+            border-color: #d4af37;
+
+            box-shadow:
+                0 0 0 3px rgba(212, 175, 55, 0.10);
+        }
+
+        .span-2 {
+            grid-column: span 2;
+        }
+
+        /* =========================
+           PASSWORD STRENGTH
+        ========================= */
+
+        .strength {
+            display: flex;
+
+            flex-direction: row;
+            align-items: center;
+
+            gap: 5px;
+
+            margin-top: -2px;
+        }
+
+        .strength i {
+            display: block;
+
+            width: 25px;
+            height: 3px;
+
+            background: #303740;
+
+            border-radius: 5px;
+        }
+
+        .strength span {
+            margin-left: 5px;
+
+            color: #737c86;
+
+            font-size: 10px;
+            font-weight: normal;
+        }
+
+        /* =========================
+           BUTTON
+        ========================= */
+
+        .btn {
+            height: 50px;
+
+            border: none;
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+            font-weight: bold;
+
+            transition: 0.25s ease;
+        }
+
+        .btn-primary {
+            margin-top: 5px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #d4af37,
+                    #b99220
+                );
+
+            color: #111;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 10px 25px rgba(212, 175, 55, 0.22);
+        }
+
+        /* =========================
+           LOGIN LINK
+        ========================= */
+
+        .auth-bottom {
+            margin-top: 25px;
+
+            text-align: center;
+
+            color: #858e98;
+
+            font-size: 13px;
+        }
+
+        .auth-bottom a {
+            color: #d4af37;
+
+            text-decoration: none;
+
+            font-weight: 600;
+        }
+
+        .auth-bottom a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================
+           ERROR MESSAGE
+        ========================= */
+
+        .error-message {
+            display: none;
+
+            margin-bottom: 18px;
+            padding: 12px;
+
+            border: 1px solid rgba(220, 70, 70, 0.35);
+            border-radius: 8px;
+
+            background: rgba(220, 70, 70, 0.08);
+
+            color: #ff8d8d;
+
+            font-size: 13px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 850px) {
+
+            .auth-brand {
+                left: 25px;
+                top: 22px;
+            }
+
+            .auth-layout {
+                grid-template-columns: 1fr;
+
+                gap: 30px;
+
+                padding-top: 110px;
+            }
+
+            .auth-aside {
+                text-align: center;
+                padding: 10px;
+            }
+
+            .auth-aside h1,
+            .auth-aside > p:not(.eyebrow) {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .auth-card {
+                margin: auto;
+                max-width: 650px;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .auth-layout {
+                width: 94%;
+
+                padding-top: 95px;
+            }
+
+            .auth-card {
+                padding: 28px 20px;
+            }
+
+            .auth-card h2 {
+                font-size: 28px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .span-2 {
+                grid-column: span 1;
+            }
+
+            .auth-aside h1 {
+                font-size: 38px;
+            }
+
+            .brand-name {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <!-- =========================
+         BRAND
+    ========================= -->
+
+    <a class="auth-brand" href="index.html">
+
+        <span class="crest">M</span>
+
+        <span class="brand-name">
+            MPLADS
+            <small>Monitoring &amp; Risk Analytics</small>
+        </span>
+
+    </a>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
+
+    <main class="auth-layout">
+
+        <!-- LEFT SIDE -->
+
+        <section class="auth-aside">
+
+            <p class="eyebrow">
+                Access verification
+            </p>
+
+            <h1>
+                Request your official workspace access.
+            </h1>
+
+            <p>
+                Submit your details for verification.
+                This prototype simulates the review workflow
+                and does not transmit information.
+            </p>
+
+        </section>
+
+
+        <!-- RIGHT SIDE -->
+
+        <section class="auth-card">
+
+            <p class="eyebrow">
+                Official enrollment
+            </p>
+
+            <h2>
+                Request Official Access
+            </h2>
+
+
+            <!-- Error message -->
+
+            <div id="error-message" class="error-message">
+            </div>
+
+
+            <!-- =========================
+                 FORM
+            ========================= -->
+
+            <form
+                id="signup-form"
+                class="form-grid"
+                action="registration"
+                method="POST"
+            >
+
+                <!-- FULL NAME -->
+
+                <label>
+                    Full Name
+
+                    <input
+                        id="full-name"
+                        name="fullName"
+                        type="text"
+                        placeholder="Enter full name"
+                        required
+                    >
+                </label>
+
+
+                <!-- OFFICIAL ID -->
+
+                <label>
+                    Official ID
+
+                    <input
+                        id="official-id"
+                        name="officialId"
+                        type="text"
+                        placeholder="Enter official ID"
+                        required
+                    >
+                </label>
+
+
+                <!-- EMAIL -->
+
+                <label>
+                    Official Email
+
+                    <input
+                        id="official-email"
+                        name="officialEmail"
+                        type="email"
+                        placeholder="name@authority.gov.in"
+                        required
+                    >
+                </label>
+
+
+                <!-- DESIGNATION -->
+
+                <label>
+                    Designation
+
+                    <input
+                        id="designation"
+                        name="designation"
+                        type="text"
+                        placeholder="Enter designation"
+                        required
+                    >
+                </label>
+
+
+                <!-- DEPARTMENT -->
+
+                <label class="span-2">
+                    Department / Authority
+
+                    <input
+                        id="department"
+                        name="department"
+                        type="text"
+                        placeholder="Enter department or authority"
+                        required
+                    >
+                </label>
+
+
+                <!-- PASSWORD -->
+
+                <label>
+
+                    Password
+
+                    <input
+                        id="new-password"
+                        name="password"
+                        type="password"
+                        minlength="6"
+                        placeholder="Create password"
+                        required
+                    >
+
+                    <small class="strength">
+
+                        <i></i>
+                        <i></i>
+                        <i></i>
+
+                        <span id="strength-text">
+                            Password strength
+                        </span>
+
+                    </small>
+
+                </label>
+
+
+                <!-- CONFIRM PASSWORD -->
+
+                <label>
+
+                    Confirm Password
+
+                    <input
+                        id="confirm-password"
+                        name="confirmPassword"
+                        type="password"
+                        minlength="6"
+                        placeholder="Confirm password"
+                        required
+                    >
+
+                </label>
+
+
+                <!-- SUBMIT -->
+
+                <button
+                    class="btn btn-primary span-2"
+                    type="submit"
+                >
+                    Submit access request →
+                </button>
+
+            </form>
+
+
+            <!-- LOGIN -->
+
+            <p class="auth-bottom">
+
+                Already have access?
+
+                <a href="login.html">
+                    Sign in
+                </a>
+
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+        const password =
+            document.getElementById("new-password");
+
+        const confirmPassword =
+            document.getElementById("confirm-password");
+
+        const strengthBars =
+            document.querySelectorAll(".strength i");
+
+        const strengthText =
+            document.getElementById("strength-text");
+
+        const signupForm =
+            document.getElementById("signup-form");
+
+        const errorMessage =
+            document.getElementById("error-message");
+
+
+        /* =========================
+           PASSWORD STRENGTH
+        ========================= */
+
+        password.addEventListener("input", function () {
+
+            const value = password.value;
+
+            let strength = 0;
+
+
+            if (value.length >= 6) {
+                strength++;
+            }
+
+            if (/[A-Z]/.test(value)) {
+                strength++;
+            }
+
+            if (/[0-9!@#$%^&*]/.test(value)) {
+                strength++;
+            }
+
+
+            strengthBars.forEach(function (bar, index) {
+
+                if (index < strength) {
+
+                    bar.style.background = "#d4af37";
+
+                } else {
+
+                    bar.style.background = "#303740";
+
+                }
+
+            });
+
+
+            if (strength === 0) {
+
+                strengthText.textContent =
+                    "Password strength";
+
+            } else if (strength === 1) {
+
+                strengthText.textContent =
+                    "Weak";
+
+            } else if (strength === 2) {
+
+                strengthText.textContent =
+                    "Medium";
+
+            } else {
+
+                strengthText.textContent =
+                    "Strong";
+            }
+
+        });
+
+
+        /* =========================
+           CONFIRM PASSWORD
+           
+           IMPORTANT:
+           We are NOT using
+           event.preventDefault()
+           because the form must
+           reach registration.java.
+        ========================= */
+
+        signupForm.addEventListener("submit", function (event) {
+
+            if (password.value !== confirmPassword.value) {
+
+                event.preventDefault();
+
+                errorMessage.style.display = "block";
+
+                errorMessage.textContent =
+                    "Passwords do not match.";
+
+                confirmPassword.focus();
+
+                return;
+            }
+
+
+            errorMessage.style.display = "none";
+
+        });
+
+    </script>
+
+</body>
+</html>
