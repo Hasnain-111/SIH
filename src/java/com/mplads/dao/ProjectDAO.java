@@ -11,7 +11,7 @@ public class ProjectDAO {
 
     public List<Project> getAllProjects() {
         List<Project> projects = new ArrayList<>();
-        String sql = "SELECT * FROM projects";
+        String sql = "SELECT * FROM project";
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
