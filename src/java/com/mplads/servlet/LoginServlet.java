@@ -24,7 +24,7 @@ public class LoginServlet extends HttpServlet {
                            HttpServletResponse res)
             throws IOException, ServletException {
 
-        // Get login form values
+       
         String email =
                 req.getParameter("email");
 
@@ -32,7 +32,7 @@ public class LoginServlet extends HttpServlet {
                 req.getParameter("password");
 
 
-        // Check empty fields
+       
         if (email == null || email.isEmpty() ||
             password == null || password.isEmpty()) {
 
@@ -46,13 +46,13 @@ public class LoginServlet extends HttpServlet {
 
         try {
 
-            // Load MySQL driver
+           
             Class.forName(
                     "com.mysql.cj.jdbc.Driver"
             );
 
 
-            // Connect to database
+            
             Connection con =
                     DriverManager.getConnection(
                             URL,
@@ -61,12 +61,12 @@ public class LoginServlet extends HttpServlet {
                     );
 
 
-            // Create Statement
+            
             Statement stmt =
                     con.createStatement();
 
 
-            // Login query
+            
             String sql =
                     "SELECT * FROM official_users " +
                     "WHERE official_email = '" +
@@ -81,8 +81,7 @@ public class LoginServlet extends HttpServlet {
 
             if (rs.next()) {
 
-                // Login successful
-
+               
                 HttpSession session =
                         req.getSession();
 
@@ -111,7 +110,7 @@ public class LoginServlet extends HttpServlet {
 
             } else {
 
-                // Invalid login
+                
                 res.setContentType("text/html");
 
                 PrintWriter out =
