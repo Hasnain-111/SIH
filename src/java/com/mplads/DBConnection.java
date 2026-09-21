@@ -5,15 +5,12 @@ import java.sql.DriverManager;
 
 public class DBConnection {
 
-    private static final String HOST = System.getenv("DB_HOST");
-    private static final String PORT = System.getenv("DB_PORT");
-    private static final String DATABASE = System.getenv("DB_NAME");
-    private static final String USER = System.getenv("DB_USER");
-    private static final String PASSWORD = System.getenv("DB_PASSWORD");
-
     private static final String URL =
-            "jdbc:mysql://" + HOST + ":" + PORT + "/" + DATABASE
-            + "?sslMode=REQUIRED";
+            "jdbc:mysql://mysql-d1e32da-elhanyasir81-f053.g.aivencloud.com:13489/MPLADs?ssl-mode=REQUIRED";
+
+    private static final String USER = "avnadmin";
+
+    private static final String PASSWORD = "AVNS_DszyK_UqyhVhh_T2zX2";
 
     public static Connection getConnection() throws Exception {
 
