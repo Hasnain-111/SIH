@@ -1,10 +1,18 @@
 package com.mplads.servlet;
 
+import com.mplads.DBConnection;
+
 import java.io.IOException;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import java.sql.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -12,33 +20,20 @@ public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // =====================================================
-    // DATABASE CONNECTION
-    // =====================================================
-
-    private static final String URL =
-            "jdbc:mysql://mysql-d1e32da-elhanyasir81-f053.g.aivencloud.com:13489/MPLADs?ssl-mode=REQUIRED";
-
-    private static final String USER =
-            "avnadmin";
-
-    private static final String PASSWORD =
-            "AVNS_DszyK_UqyhVhh_T2zX2";
-
-
-    // =====================================================
     // FIXED ADMIN CREDENTIALS
     // =====================================================
 
-    private static final String ADMIN_EMAIL =
-            "admin@gmail.com";
+    private static final String ADMIN_EMAIL = "admin@gmail.com";
+    private static final String ADMIN_PASSWORD = "admin123";
 
-    private static final String ADMIN_PASSWORD =
-            "admin123";
-
+    // =====================================================
+    // POST LOGIN
+    // =====================================================
 
     @Override
-    protected void doPost(HttpServletRequest req,
-                           HttpServletResponse res)
+    protected void doPost(
+            HttpServletRequest req,
+            HttpServletResponse res)
             throws IOException, ServletException {
 
         // -------------------------------------------------
@@ -47,7 +42,6 @@ public class LoginServlet extends HttpServlet {
 
         String email = req.getParameter("email");
         String password = req.getParameter("password");
-
 
         // -------------------------------------------------
         // CHECK EMPTY VALUES
@@ -65,34 +59,32 @@ public class LoginServlet extends HttpServlet {
 
         email = email.trim();
 
-
         // =================================================
         // ADMIN LOGIN
         // =================================================
 
-      if (email.equals(ADMIN_EMAIL)
-        && password.equals(ADMIN_PASSWORD)) {
+        if (email.equals(ADMIN_EMAIL)
+                && password.equals(ADMIN_PASSWORD)) {
 
-    HttpSession session = req.getSession();
+            HttpSession session = req.getSession();
 
-    session.setAttribute(
-            "admin",
-            email
-    );
+            session.setAttribute(
+                    "admin",
+                    email
+            );
 
-    session.setAttribute(
-            "userType",
-            "ADMIN"
-    );
+            session.setAttribute(
+                    "userType",
+                    "ADMIN"
+            );
 
-    res.sendRedirect(
-            req.getContextPath()
-            + "/admin-dashboard.html"
-    );
+            res.sendRedirect(
+                    req.getContextPath()
+                    + "/admin-dashboard.html"
+            );
 
-    return;
-}
-
+            return;
+        }
 
         // =================================================
         // NORMAL OFFICIAL LOGIN
@@ -103,29 +95,13 @@ public class LoginServlet extends HttpServlet {
                 "WHERE official_email = ? " +
                 "AND password_hash = ?";
 
-
         try {
 
             // -------------------------------------------------
-            // LOAD MYSQL DRIVER
+            // CONNECT TO AIVEN MYSQL THROUGH DBConnection
             // -------------------------------------------------
 
-            Class.forName(
-                    "com.mysql.cj.jdbc.Driver"
-            );
-
-
-            // -------------------------------------------------
-            // CONNECT TO DATABASE
-            // -------------------------------------------------
-
-            Connection con =
-                    DriverManager.getConnection(
-                            URL,
-                            USER,
-                            PASSWORD
-                    );
-
+            Connection con = DBConnection.getConnection();
 
             // -------------------------------------------------
             // PREPARED STATEMENT
@@ -144,14 +120,12 @@ public class LoginServlet extends HttpServlet {
                     password
             );
 
-
             // -------------------------------------------------
-            // EXECUTE
+            // EXECUTE QUERY
             // -------------------------------------------------
 
             ResultSet rs =
                     stmt.executeQuery();
-
 
             // =================================================
             // OFFICIAL LOGIN SUCCESS
@@ -164,23 +138,17 @@ public class LoginServlet extends HttpServlet {
 
                 session.setAttribute(
                         "officialEmail",
-                        rs.getString(
-                                "official_email"
-                        )
+                        rs.getString("official_email")
                 );
 
                 session.setAttribute(
                         "officialName",
-                        rs.getString(
-                                "full_name"
-                        )
+                        rs.getString("full_name")
                 );
 
                 session.setAttribute(
                         "officialId",
-                        rs.getString(
-                                "official_id"
-                        )
+                        rs.getString("official_id")
                 );
 
                 session.setAttribute(
@@ -188,21 +156,22 @@ public class LoginServlet extends HttpServlet {
                         "OFFICIAL"
                 );
 
-
-                // Redirect to official dashboard
+                // -------------------------------------------------
+                // REDIRECT TO OFFICIAL DASHBOARD
+                // -------------------------------------------------
 
                 res.sendRedirect(
-                        req.getContextPath() +
-                        "/dashboard.html"
+                        req.getContextPath()
+                        + "/dashboard.html"
                 );
 
             } else {
 
-                // Invalid official login
+                // -------------------------------------------------
+                // INVALID OFFICIAL LOGIN
+                // -------------------------------------------------
 
-                res.setContentType(
-                        "text/html"
-                );
+                res.setContentType("text/html");
 
                 res.getWriter().println(
                         "<script>" +
@@ -214,23 +183,23 @@ public class LoginServlet extends HttpServlet {
                 );
             }
 
-
             // -------------------------------------------------
-            // CLOSE RESOURCES
+            // CLOSE DATABASE RESOURCES
             // -------------------------------------------------
 
             rs.close();
             stmt.close();
             con.close();
 
-
         } catch (Exception e) {
+
+            // -------------------------------------------------
+            // DATABASE ERROR
+            // -------------------------------------------------
 
             e.printStackTrace();
 
-            res.setContentType(
-                    "text/html"
-            );
+            res.setContentType("text/html");
 
             res.getWriter().println(
                     "<script>" +
