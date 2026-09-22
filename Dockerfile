@@ -21,8 +21,8 @@ RUN curl -fSL \
 # Remove default Tomcat applications
 RUN rm -rf ${CATALINA_HOME}/webapps/*
 
-# Copy your NetBeans WAR file
-COPY dist/MPLADs.war ${CATALINA_HOME}/webapps/MPLADS.war
+# Copy NetBeans WAR file
+COPY dist/MPLADS.war ${CATALINA_HOME}/webapps/MPLADS.war
 
 # Railway/Tomcat port
 EXPOSE 8080
