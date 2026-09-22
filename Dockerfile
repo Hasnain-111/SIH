@@ -22,7 +22,7 @@ RUN curl -fSL \
 RUN rm -rf ${CATALINA_HOME}/webapps/*
 
 # Copy NetBeans WAR file
-COPY dist/MPLADS.war ${CATALINA_HOME}/webapps/MPLADS.war
+COPY dist/MPLADs.war ${CATALINA_HOME}/webapps/MPLADS.war
 
 # Railway/Tomcat port
 EXPOSE 8080
