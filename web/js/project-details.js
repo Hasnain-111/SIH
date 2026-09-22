@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Fetch all projects and find the matching one
-    fetch('/MPLADs/api/projects')
+    fetch('/MPLADS/api/projects')
         .then(res => res.json())
         .then(projects => {
             const p = projects.find(proj => String(proj.project_id) === String(projectId));
@@ -228,7 +228,7 @@ function runAnalysis(projectId) {
 
     // zone the user came from (red/yellow/green page adds &level=High|Medium|Low)
     const level = new URLSearchParams(window.location.search).get('level');
-    fetch('/MPLADs/api/analyze?id=' + encodeURIComponent(projectId) + (level ? '&level=' + encodeURIComponent(level) : ''))
+    fetch('/MPLADS/api/analyze?id=' + encodeURIComponent(projectId) + (level ? '&level=' + encodeURIComponent(level) : ''))
         .then(r => r.json().catch(() => ({ error: 'Invalid response from server.' }))
             .then(data => ({ ok: r.ok, data })))
         .then(({ ok, data }) => {

@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadZoneCounts() {
-        fetch('/MPLADs/api/zone-counts')
+        fetch('/MPLADS/api/zone-counts')
             .then(res => {
                 if (!res.ok) throw new Error('Bad response: ' + res.status);
                 return res.json();
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadZoneCounts();
 
     // ---- Total Projects: every record in the projects table ----
-    fetch('/MPLADs/api/projects')
+    fetch('/MPLADS/api/projects')
         .then(res => res.json())
         .then(projects => {
             setText('total-projects', projects.length.toLocaleString());
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---- Priority Review Queue: RED ZONE (High risk) projects only ----
     if (tbody) {
-        fetch('/MPLADs/api/zone-projects?level=High')
+        fetch('/MPLADS/api/zone-projects?level=High')
             .then(res => {
                 if (!res.ok) throw new Error('Bad response: ' + res.status);
                 return res.json();

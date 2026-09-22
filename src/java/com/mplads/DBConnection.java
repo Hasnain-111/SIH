@@ -13,16 +13,35 @@ public class DBConnection {
 
     private static final String URL =
             "jdbc:mysql://" + HOST + ":" + PORT + "/" + DATABASE
-            + "?sslMode=REQUIRED";
+            + "?sslMode=REQUIRED"
+            + "&connectTimeout=10000"
+            + "&socketTimeout=15000";
 
     public static Connection getConnection() throws Exception {
 
+        System.out.println("========== DB DEBUG ==========");
+        System.out.println("DB_HOST = " + HOST);
+        System.out.println("DB_PORT = " + PORT);
+        System.out.println("DB_NAME = " + DATABASE);
+        System.out.println("DB_USER = " + USER);
+        System.out.println("DB_PASSWORD configured = "
+                + (PASSWORD != null && !PASSWORD.isEmpty()));
+
+        System.out.println("Loading MySQL driver...");
+
         Class.forName("com.mysql.cj.jdbc.Driver");
 
-        return DriverManager.getConnection(
+        System.out.println("MySQL driver loaded.");
+        System.out.println("Attempting database connection...");
+
+        Connection con = DriverManager.getConnection(
                 URL,
                 USER,
                 PASSWORD
         );
+
+        System.out.println("========== DATABASE CONNECTED ==========");
+
+        return con;
     }
 }
