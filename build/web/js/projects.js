@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const isRegistry = !zone;
     const ZONE_LEVELS = { red: 'High', yellow: 'Medium', green: 'Low' };
     const DATA_URL = ZONE_LEVELS[zone]
-        ? '/MPLADs/api/zone-projects?level=' + ZONE_LEVELS[zone]
-        : '/MPLADs/api/projects';
+    ? '/MPLADS/api/zone-projects?level=' + ZONE_LEVELS[zone]
+    : '/MPLADS/api/projects';
     const COLS = 10;   // table columns (Project ID column is not shown)
 
     let allProjects = [];
